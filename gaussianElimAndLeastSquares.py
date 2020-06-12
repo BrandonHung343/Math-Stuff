@@ -1,4 +1,38 @@
 # M is an mxn 2d list representing a matrix
+''' Given a set of points, the least squares method return a polynomial of 
+    a specificed degree that minimized sum of squared distances between the 
+    point and the polynomial. 
+
+    Ideally, given a set of points we'd like to solve the equation Ax = y to 
+    find the coefficients we need to multiply our x values by to get our y values.
+    However, this doesn't always exist; in fact, if there are more points than degree 
+    of our polynomial, then the solution almost never exists (unless your points happen
+    to form a number of linearly independent vectors equal to your polynomial degree + 1).
+    Why? Because our coefficients of our polynomial can each be represented as a set of 
+    linearly independent vectors, each with [c1...0], [0, c2...0] all the way to [0,..cn].
+    If A is not invertible, then we have a problem: not all of A's vectors are linearly 
+    independent. As a result, we can't get a set of coefficients which uniquely solves this 
+    problem; as such, we are overdetermined and must use the pseudoinverse. 
+
+    The proof of how the method works can be found here: 
+    http://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes03b_LeastSquaresRegression.pdf
+    The gist is that, for an overdetermined system, we instead use the pseudoinverse and try to find
+    A' * A * x = A' * b
+    to minimize the sum of the squared distances from the system to our polynomial.
+
+    To solve this, I used python 2d lists as arrays (which, under no circumstances
+    should be used for real matrice calculations. I just did it to get the "from scratch"
+    experience!). I implemented transposition, Gaussian elimination to get a matrix in 
+    row-echelon form, and backsubstitution to solve a row-echelon matrix. Finally, I combined
+    them to solve the equation A' * A * x = A' * b  by augmenting the matrix A' * A with A' * b
+    in the final column, then solving using Gaussian elimination and backsubstitution.
+
+    Finally, what happens if we have n+1 points exactly? If they form a set of linearly indepedent 
+    vectors, then we can solve the system exactly and find the polynomial of that degree that 
+    interpolates our points. If we have fewer points than our degree + 1, then we enter an 
+    underconstrained system. Infinitely many polynomials of our degree interpolate the points, so 
+    we simply choose one and go with it.
+    '''
 import copy
 import math
 import matplotlib.pyplot as plt
